@@ -23,7 +23,9 @@ export default function ConfirmationPage() {
       <AdminExportButton />
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
         <div className="mb-6">
-          <StrykerLogo className="text-2xl mb-4" />
+          <div className="mb-4 flex justify-center">
+            <StrykerLogo className="text-2xl mb-4" />
+          </div>
           <div className="text-6xl mb-4">✅</div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
           <p className="text-gray-600">
@@ -40,16 +42,19 @@ export default function ConfirmationPage() {
           A confirmation email has been sent. You can close this page.
         </p>
 
-        <button
+        <a
+          href={`mailto:?subject=Stryker IT Christmas Order Confirmation - ${orderNumber}&body=Thank you for your order!%0D%0A%0D%0AYour Order Number: ${orderNumber}%0D%0A%0D%0AWe'll process your order and send it out soon.%0D%0A%0D%0AThank you,%0D%0AStryker IT Team`}
           onClick={() => {
-            sessionStorage.clear()
-            router.push('/')
+            // Clear session after a short delay to allow mailto to open
+            setTimeout(() => {
+              sessionStorage.clear()
+            }, 100)
           }}
-          className="w-full px-6 py-2 text-black rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#ffb500] focus:ring-offset-2 font-medium"
+          className="w-full px-6 py-2 text-black rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#ffb500] focus:ring-offset-2 font-medium inline-block text-center"
           style={{ backgroundColor: '#ffb500' }}
         >
-          Start New Order
-        </button>
+          Email Order Confirmation
+        </a>
       </div>
     </div>
   )
