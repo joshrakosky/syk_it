@@ -16,8 +16,8 @@ All images should be placed in `/public/images/` and referenced as `/images/file
 ## Choice 1 Products
 
 ### Tile Mate 4 Pack
-- `/images/tile-mate-4pack-black.jpg` - Black
-- `/images/tile-mate-4pack-white.jpg` - White
+- `/images/tile-mate-black.jpg` - Black
+- `/images/tile-mate-white.jpg` - White
 
 ### OGIO Surge RSS Pack
 - `/images/ogio-surge-rss-black-pindot.jpg` - Black Pindot (default)
