@@ -46,8 +46,8 @@ All images should be placed in `/public/images/` and referenced as `/images/file
 - `/images/north-face-womens-skyline-urban-navy-heather.jpg` - Urban Navy Heather
 
 **The North Face Men's Sweater Fleece Jacket:**
-- `/images/north-face-mens-sweater-fleece-black-heather.jpg` - Black Heather
-- `/images/north-face-mens-sweater-fleece-medium-grey-heather.jpg` - Medium Grey Heather
+- `/images/north-face-sweater-fleece-black-heather.jpg` - Black Heather
+- `/images/north-face-sweater-fleece-medium-grey-heather.jpg` - Medium Grey Heather
 
 **The North Face Women's Sweater Fleece Jacket:**
 - `/images/north-face-womens-sweater-fleece-black-heather.jpg` - Black Heather
