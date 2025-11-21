@@ -55,25 +55,18 @@ All images should be placed in `/public/images/` and referenced as `/images/file
 
 **The North Face Men's Highest Peak Full-Zip Fleece Jacket:**
 - `/images/north-face-mens-highest-peak-black.jpg` - Black
-- `/images/north-face-mens-highest-peak-navy.jpg` - Navy
 - `/images/north-face-mens-highest-peak-gray.jpg` - Gray
-- `/images/north-face-mens-highest-peak-charcoal.jpg` - Charcoal
 
 **The North Face Women's Highest Peak Full-Zip Fleece Jacket:**
 - `/images/north-face-womens-highest-peak-black.jpg` - Black
-- `/images/north-face-womens-highest-peak-navy.jpg` - Navy
 - `/images/north-face-womens-highest-peak-gray.jpg` - Gray
-- `/images/north-face-womens-highest-peak-charcoal.jpg` - Charcoal
 
 **Under Armour Men's Unstoppable Fleece Full-Zip:**
 - `/images/under-armour-mens-unstoppable-black.jpg` - Black
-- `/images/under-armour-mens-unstoppable-navy.jpg` - Navy
 - `/images/under-armour-mens-unstoppable-gray.jpg` - Gray
-- `/images/under-armour-mens-unstoppable-charcoal.jpg` - Charcoal
 
 **Under Armour Women's Unstoppable Fleece Full-Zip Jacket:**
 - `/images/under-armour-womens-unstoppable-black.jpg` - Black
-- `/images/under-armour-womens-unstoppable-navy.jpg` - Navy
 - `/images/under-armour-womens-unstoppable-gray.jpg` - Gray
 
 ## Choice 2 Products (Kits)
