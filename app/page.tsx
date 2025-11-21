@@ -37,7 +37,7 @@ export default function LandingPage() {
       <AdminExportButton />
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
-          <div className="mb-4">
+          <div className="mb-4 flex justify-center">
             <StrykerLogo className="text-3xl" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
