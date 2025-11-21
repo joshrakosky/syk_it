@@ -43,7 +43,7 @@ export default function ConfirmationPage() {
         </p>
 
         <a
-          href={`mailto:?subject=Stryker IT Christmas Order Confirmation - ${orderNumber}&body=Thank you for your order!%0D%0A%0D%0AYour Order Number: ${orderNumber}%0D%0A%0D%0AWe'll process your order and send it out soon.%0D%0A%0D%0AThank you,%0D%0AStryker IT Team`}
+          href={`mailto:?subject=Stryker IT Christmas Order Confirmation - ${orderNumber}&body=Thank you for your order!%0D%0A%0D%0AYour Order Number: ${orderNumber}%0D%0A%0D%0AThank you`}
           onClick={() => {
             // Clear session after a short delay to allow mailto to open
             setTimeout(() => {

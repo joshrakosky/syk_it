@@ -14,6 +14,17 @@ export const APPROVED_EMAILS = [
   'team8@stryker.com',
   'team9@stryker.com',
   'team10@stryker.com',
+  // Additional test emails
+  'test1@stryker.com',
+  'test2@stryker.com',
+  'test3@stryker.com',
+  'test4@stryker.com',
+  'test5@stryker.com',
+  'test6@stryker.com',
+  'test7@stryker.com',
+  'test8@stryker.com',
+  'test9@stryker.com',
+  'test10@stryker.com',
   // Final approved emails list
   'aashish.sethi@stryker.com',
   'abdul.kasim@stryker.com',
