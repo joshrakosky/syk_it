@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import StrykerLogo from '@/components/StrykerLogo'
+import AdminExportButton from '@/components/AdminExportButton'
 
 export default function ShippingPage() {
   const router = useRouter()
@@ -91,7 +92,8 @@ export default function ShippingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-yellow-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-yellow-50 py-12 px-4 relative">
+      <AdminExportButton />
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="mb-6">

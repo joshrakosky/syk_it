@@ -70,9 +70,9 @@ export default function AdminPage() {
   }
 
   const exportToExcel = () => {
-    // Prepare data for Excel export
-    const excelData = orders.flatMap(order => {
-      return order.items.map((item, index) => ({
+    // Sheet 1: Detailed Orders (one row per item)
+    const detailedData = orders.flatMap(order => {
+      return order.items.map((item) => ({
         'Order Number': order.order_number,
         'Email': order.email,
         'Product Name': item.product_name,
@@ -89,10 +89,54 @@ export default function AdminPage() {
       }))
     })
 
-    // Create workbook and worksheet
-    const ws = XLSX.utils.json_to_sheet(excelData)
+    // Sheet 2: Distribution Summary (grouped by product/color/size)
+    const summaryMap = new Map<string, number>()
+    
+    orders.forEach(order => {
+      order.items.forEach(item => {
+        // Create a unique key for product/color/size combination
+        const key = [
+          item.product_name,
+          item.customer_item_number || '',
+          item.color || 'N/A',
+          item.size || 'N/A'
+        ].join('|')
+        
+        summaryMap.set(key, (summaryMap.get(key) || 0) + 1)
+      })
+    })
+
+    // Convert map to array for Excel
+    const summaryData = Array.from(summaryMap.entries()).map(([key, quantity]) => {
+      const [productName, customerItem, color, size] = key.split('|')
+      return {
+        'Product Name': productName,
+        'Customer Item #': customerItem,
+        'Color': color,
+        'Size': size,
+        'Quantity': quantity
+      }
+    }).sort((a, b) => {
+      // Sort by product name, then color, then size
+      if (a['Product Name'] !== b['Product Name']) {
+        return a['Product Name'].localeCompare(b['Product Name'])
+      }
+      if (a['Color'] !== b['Color']) {
+        return a['Color'].localeCompare(b['Color'])
+      }
+      return a['Size'].localeCompare(b['Size'])
+    })
+
+    // Create workbook with two sheets
     const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'Orders')
+    
+    // Detailed Orders sheet
+    const wsDetailed = XLSX.utils.json_to_sheet(detailedData)
+    XLSX.utils.book_append_sheet(wb, wsDetailed, 'Detailed Orders')
+    
+    // Distribution Summary sheet
+    const wsSummary = XLSX.utils.json_to_sheet(summaryData)
+    XLSX.utils.book_append_sheet(wb, wsSummary, 'Distribution Summary')
 
     // Generate filename with current date
     const filename = `stryker-orders-${new Date().toISOString().split('T')[0]}.xlsx`
@@ -158,6 +202,7 @@ export default function AdminPage() {
                 onClick={exportToExcel}
                 disabled={orders.length === 0}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Exports two sheets: Detailed Orders and Distribution Summary"
               >
                 Export to Excel
               </button>

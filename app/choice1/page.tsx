@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Product } from '@/types'
 import StrykerLogo from '@/components/StrykerLogo'
+import AdminExportButton from '@/components/AdminExportButton'
 
 export default function Choice1Page() {
   const router = useRouter()
@@ -23,16 +24,37 @@ export default function Choice1Page() {
     
     const productWithColors = selectedProduct as any
     
-    // If color is selected, use color-specific thumbnail
-    if (selectedColor === 'Black' && productWithColors.thumbnail_url_black) {
-      return productWithColors.thumbnail_url_black
-    }
-    if (selectedColor === 'White' && productWithColors.thumbnail_url_white) {
-      return productWithColors.thumbnail_url_white
+    // If color is selected, try to find color-specific thumbnail
+    if (selectedColor && productWithColors.color_thumbnails) {
+      // Check JSONB color_thumbnails object first (most flexible)
+      const colorThumbnails = productWithColors.color_thumbnails
+      if (colorThumbnails[selectedColor]) {
+        return colorThumbnails[selectedColor]
+      }
     }
     
-    // Default to black thumbnail if available, otherwise use default thumbnail
-    return productWithColors.thumbnail_url_black || selectedProduct.thumbnail_url
+    // Fallback to specific color fields
+    if (selectedColor) {
+      const colorLower = selectedColor.toLowerCase()
+      if (colorLower.includes('black') && productWithColors.thumbnail_url_black) {
+        return productWithColors.thumbnail_url_black
+      }
+      if (colorLower.includes('white') && productWithColors.thumbnail_url_white) {
+        return productWithColors.thumbnail_url_white
+      }
+    }
+    
+    // Default to first available color thumbnail or default thumbnail
+    if (productWithColors.color_thumbnails && selectedProduct.available_colors && selectedProduct.available_colors.length > 0) {
+      const firstColor = selectedProduct.available_colors[0]
+      if (productWithColors.color_thumbnails[firstColor]) {
+        return productWithColors.color_thumbnails[firstColor]
+      }
+    }
+    
+    return productWithColors.thumbnail_url_black || 
+           productWithColors.thumbnail_url_white || 
+           selectedProduct.thumbnail_url
   }
 
   useEffect(() => {
@@ -51,7 +73,7 @@ export default function Choice1Page() {
     try {
       const { data, error } = await supabase
         .from('christmas_products')
-        .select('*, thumbnail_url_black, thumbnail_url_white')
+        .select('*, thumbnail_url_black, thumbnail_url_white, color_thumbnails')
         .eq('category', 'choice1')
         .order('name')
 
@@ -99,7 +121,8 @@ export default function Choice1Page() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-yellow-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-yellow-50 py-12 px-4 relative">
+      <AdminExportButton />
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="mb-6">
@@ -127,12 +150,29 @@ export default function Choice1Page() {
                 setSelectedSize('')
                 setError('')
                 
-                // Default to Black if product requires color and has Black option
+                // Default to first available color if product requires color
                 const product = products.find(p => p.id === productId)
-                if (product?.requires_color && product.available_colors?.includes('Black')) {
+                if (product?.requires_color && product.available_colors && product.available_colors.length > 0) {
+                  // If only one color option, default to it
+                  setSelectedColor(product.available_colors[0])
+                } else if (product?.requires_color && product.available_colors?.includes('Black')) {
+                  // Otherwise default to Black if available
                   setSelectedColor('Black')
                 } else {
                   setSelectedColor('')
+                }
+                
+                // Default size based on product
+                if (product?.requires_size && product.available_sizes && product.available_sizes.length > 0) {
+                  // For Tile Mate 4 Pack, default to "4 Pack"
+                  if (product.name.includes('Tile Mate 4 Pack') && product.available_sizes.includes('4 Pack')) {
+                    setSelectedSize('4 Pack')
+                  } else if (product.available_sizes.length === 1) {
+                    // If only one size option, default to it
+                    setSelectedSize(product.available_sizes[0])
+                  } else {
+                    setSelectedSize(product.available_sizes[0])
+                  }
                 }
               }}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#ffb500] focus:border-transparent text-black bg-white"
@@ -170,12 +210,16 @@ export default function Choice1Page() {
                     {selectedProduct.name}
                   </h2>
                   {selectedProduct.description && (
-                    <p className="text-gray-600 mb-4">{selectedProduct.description}</p>
+                    <p className="text-gray-600 mb-3">{selectedProduct.description}</p>
                   )}
                   {selectedProduct.specs && (
                     <div className="mb-4">
-                      <h3 className="font-medium text-gray-900 mb-1">Specifications:</h3>
-                      <p className="text-sm text-gray-600 whitespace-pre-line">{selectedProduct.specs}</p>
+                      <h3 className="font-medium text-gray-900 mb-2">Specifications:</h3>
+                      <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                        {selectedProduct.specs.split('\n').filter(line => line.trim().startsWith('•')).map((line, idx) => (
+                          <li key={idx} className="ml-2">{line.replace('•', '').trim()}</li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>
