@@ -24,6 +24,7 @@ export default function Choice2Page() {
   const [tileSize, setTileSize] = useState<string>('') // For Tile Mate size (1 Pack, 2 Pack, 4 Pack)
   const [airtagSize, setAirtagSize] = useState<string>('') // For AirTag size (1 Pack)
   const [airtagColor, setAirtagColor] = useState<string>('White') // For AirTag color (always White)
+  const [earbudsColor, setEarbudsColor] = useState<string>('Black') // For Earbuds color (defaults to Black)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -50,6 +51,17 @@ export default function Choice2Page() {
     if (!productWithItems?.polo_thumbnails || !tileColor) return null
     // Reuse polo_thumbnails field for Tile Mate color thumbnails
     return productWithItems.polo_thumbnails[tileColor] || null
+  }
+  
+  const getAirtagThumbnail = () => {
+    if (!productWithItems?.polo_thumbnails || !airtagColor) return null
+    // Reuse polo_thumbnails field for AirTag color thumbnails (always White)
+    return productWithItems.polo_thumbnails[airtagColor] || null
+  }
+  
+  const getEarbudsThumbnail = () => {
+    if (!productWithItems?.earbuds_thumbnails || !earbudsColor) return null
+    return productWithItems.earbuds_thumbnails[earbudsColor] || null
   }
   
   const getFirstItemLabel = () => {
@@ -122,7 +134,7 @@ export default function Choice2Page() {
     try {
       const { data, error } = await supabase
         .from('christmas_products')
-        .select('*, polo_colors, polo_sizes, cap_colors, cap_sizes, beanie_colors, polo_thumbnails, cap_thumbnails, beanie_thumbnails, has_multiple_items')
+        .select('*, polo_colors, polo_sizes, cap_colors, cap_sizes, beanie_colors, polo_thumbnails, cap_thumbnails, beanie_thumbnails, earbuds_colors, earbuds_thumbnails, has_multiple_items')
         .eq('category', 'choice2')
 
       if (error) throw error
@@ -202,10 +214,11 @@ export default function Choice2Page() {
       } else if (kitType === 'tile-earbuds') {
         if (!tileColor) { setError('Please select a Tile Mate color'); return }
         if (!tileSize) { setError('Please select a Tile Mate size'); return }
+        if (!earbudsColor) { setError('Please select an earbuds color'); return }
         
         sessionStorage.setItem('choice2', JSON.stringify({
           productId: selectedProductId,
-          tileColor, tileSize,
+          tileColor, tileSize, earbudsColor,
           kitType: 'tile-earbuds',
           hasMultipleItems: true
         }))
@@ -315,6 +328,7 @@ export default function Choice2Page() {
                 setTileSize('')
                 setAirtagSize('')
                 setAirtagColor('White')
+                setEarbudsColor('Black')
                 setError('')
                 
                 // Default to first color/size if product has multiple items
@@ -340,36 +354,68 @@ export default function Choice2Page() {
                       const packMatch = productWithDefaults.name.match(/Tile Mate (\d+ Pack)/i)
                       if (packMatch && productWithDefaults.available_sizes) {
                         const packSize = packMatch[1]
-                        if (productWithDefaults.available_sizes.includes(packSize)) {
-                          setTileSize(packSize)
-                        } else if (productWithDefaults.available_sizes.length > 0) {
+                        // Only default if there's one size option, otherwise let user select
+                        if (productWithDefaults.available_sizes.length === 1) {
                           setTileSize(productWithDefaults.available_sizes[0])
+                        } else if (productWithDefaults.available_sizes.includes(packSize)) {
+                          // If multiple options but pack size matches, use it
+                          setTileSize(packSize)
+                        } else {
+                          setTileSize('')
                         }
-                      } else if (productWithDefaults.available_sizes && productWithDefaults.available_sizes.length > 0) {
+                      } else if (productWithDefaults.available_sizes && productWithDefaults.available_sizes.length === 1) {
                         setTileSize(productWithDefaults.available_sizes[0])
+                      } else {
+                        setTileSize('')
                       }
                     } else {
+                      // It's a Polo - default to first color
                       setPoloColor(productWithDefaults.polo_colors[0])
+                      // Default polo size only if there's one option
+                      if (productWithDefaults.polo_sizes && productWithDefaults.polo_sizes.length === 1) {
+                        setPoloSize(productWithDefaults.polo_sizes[0])
+                      } else {
+                        setPoloSize('')
+                      }
                     }
                   }
+                  
+                  // Auto-select cap and beanie colors if available
                   if (productWithDefaults.cap_colors && productWithDefaults.cap_colors.length > 0 && !isTechOrganizerPowerBank) {
                     setCapColor(productWithDefaults.cap_colors[0])
-                  }
-                  if (productWithDefaults.cap_sizes && productWithDefaults.cap_sizes.length > 0) {
-                    setCapSize(productWithDefaults.cap_sizes[0])
+                    // Default cap size only if there's one option
+                    if (productWithDefaults.cap_sizes && productWithDefaults.cap_sizes.length === 1) {
+                      setCapSize(productWithDefaults.cap_sizes[0])
+                    } else {
+                      setCapSize('')
+                    }
                   }
                   if (productWithDefaults.beanie_colors && productWithDefaults.beanie_colors.length > 0) {
                     setBeanieColor(productWithDefaults.beanie_colors[0])
-                    // Beanies are always OSFA
+                    // Beanies are always OSFA (single option)
                     setBeanieSize('OSFA')
                   }
-                  // Default AirTag size to "1 Pack" and color to "White"
-                  if (productWithDefaults.available_sizes && productWithDefaults.available_sizes.includes('1 Pack') && !productWithDefaults.polo_colors) {
+                  // Default AirTag size only if there's one option
+                  if (productWithDefaults.available_sizes && productWithDefaults.available_sizes.length === 1 && productWithDefaults.available_sizes[0] === '1 Pack' && !productWithDefaults.polo_colors) {
                     setAirtagSize('1 Pack')
                     setAirtagColor('White')
+                  } else if (productWithDefaults.available_sizes && productWithDefaults.available_sizes.length > 1 && !productWithDefaults.polo_colors) {
+                    setAirtagSize('')
+                    setAirtagColor('White')
+                  }
+                  // Default earbuds color to Black if available
+                  if (productWithDefaults.earbuds_colors && productWithDefaults.earbuds_colors.length > 0) {
+                    setEarbudsColor(productWithDefaults.earbuds_colors[0])
                   }
                 } else if (product?.requires_color && product.available_colors && product.available_colors.length > 0) {
+                  // Auto-select first color for single item products
                   setSelectedColor(product.available_colors[0])
+                }
+                // Only default size if there's one option
+                if (product?.requires_size && product.available_sizes && product.available_sizes.length === 1) {
+                  setSelectedSize(product.available_sizes[0])
+                } else if (product?.requires_size) {
+                  setSelectedSize('')
                 }
               }}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#ffb500] focus:border-transparent text-black bg-white"
@@ -422,6 +468,8 @@ export default function Choice2Page() {
                             <img src={getPoloThumbnail() || ''} alt="Polo" className="w-full rounded-lg shadow-md" />
                           ) : hasTile && getTileThumbnail() ? (
                             <img src={getTileThumbnail() || ''} alt="Tile Mate" className="w-full rounded-lg shadow-md" />
+                          ) : hasAirtag && getAirtagThumbnail() ? (
+                            <img src={getAirtagThumbnail() || ''} alt="Apple AirTag" className="w-full rounded-lg shadow-md" />
                           ) : hasAirtag ? (
                             <div className="w-full aspect-square bg-gray-100 rounded-lg shadow-md flex items-center justify-center border-2 border-gray-300">
                               <div className="text-center p-4">
@@ -521,6 +569,8 @@ export default function Choice2Page() {
                             <img src={getCapThumbnail() || ''} alt="Cap" className="w-full rounded-lg shadow-md" />
                           ) : hasBeanie && getBeanieThumbnail() ? (
                             <img src={getBeanieThumbnail() || ''} alt="Beanie" className="w-full rounded-lg shadow-md" />
+                          ) : hasEarbuds && getEarbudsThumbnail() ? (
+                            <img src={getEarbudsThumbnail() || ''} alt="Skull Candy Earbuds" className="w-full rounded-lg shadow-md" />
                           ) : hasEarbuds ? (
                             <div className="w-full aspect-square bg-gray-100 rounded-lg shadow-md flex items-center justify-center border-2 border-gray-300">
                               <div className="text-center p-4">
@@ -591,7 +641,13 @@ export default function Choice2Page() {
                         
                         {hasEarbuds && (
                           <div className="space-y-3">
-                            <p className="text-sm text-gray-600">No additional options required for earbuds.</p>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Earbuds Color *</label>
+                              <select value={earbudsColor} onChange={(e) => { setEarbudsColor(e.target.value); setError('') }} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#ffb500] focus:border-transparent text-black bg-white">
+                                <option value="">-- Select color --</option>
+                                {productWithItems.earbuds_colors?.map((color: string) => <option key={color} value={color}>{color}</option>)}
+                              </select>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -603,20 +659,30 @@ export default function Choice2Page() {
                 <>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      {selectedProduct.thumbnail_url ? (
-                        <img
-                          src={selectedProduct.thumbnail_url}
-                          alt={selectedProduct.name}
-                          className="w-full rounded-lg shadow-md"
-                        />
-                      ) : (
-                        <div className="w-full aspect-square bg-gray-100 rounded-lg shadow-md flex items-center justify-center border-2 border-gray-300">
-                          <div className="text-center p-4">
-                            <div className="text-4xl mb-2">📦</div>
-                            <div className="text-sm text-gray-500 font-medium">{selectedProduct.name}</div>
+                      {(() => {
+                        // Get thumbnail based on selected color if available
+                        const thumbnail = selectedProduct.color_thumbnails && selectedColor 
+                          ? selectedProduct.color_thumbnails[selectedColor] 
+                          : selectedProduct.thumbnail_url
+                        
+                        return thumbnail ? (
+                          <img
+                            src={thumbnail}
+                            alt={selectedProduct.name}
+                            className="w-full rounded-lg shadow-md"
+                          />
+                        ) : (
+                          <div className="w-full aspect-square bg-gray-100 rounded-lg shadow-md flex items-center justify-center border-2 border-gray-300">
+                            <div className="text-center p-4">
+                              <div className="text-4xl mb-2">📦</div>
+                              <div className="text-sm text-gray-500 font-medium">{selectedProduct.name}</div>
+                              {selectedProduct.requires_color && (
+                                <div className="text-xs text-gray-400 mt-1">Select color to view</div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )
+                      })()}
                     </div>
                     <div>
                       <h2 className="text-2xl font-semibold text-gray-900 mb-2">

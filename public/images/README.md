@@ -32,7 +32,7 @@ All images should be placed in `/public/images/` and referenced as `/images/file
 - `/images/north-face-fall-line-cosmic-blue-grey-heather.jpg` - Cosmic Blue/Grey Heather
 
 ### OGIO Gear Mega Cube
-- `/images/ogio-mega-cube.jpg` - Default thumbnail
+- `/images/ogio-mega-cube.jpg` - Black (default)
 
 ### Fleece Jackets
 **The North Face Men's Skyline Full-Zip Fleece Jacket:**
@@ -45,15 +45,25 @@ All images should be placed in `/public/images/` and referenced as `/images/file
 - `/images/north-face-womens-skyline-dark-grey-heather.jpg` - Dark Grey Heather
 - `/images/north-face-womens-skyline-urban-navy-heather.jpg` - Urban Navy Heather
 
-**The North Face Sweater Fleece Jacket (Men's & Women's):**
-- `/images/north-face-sweater-fleece-black-heather.jpg` - Black Heather
-- `/images/north-face-sweater-fleece-medium-grey-heather.jpg` - Medium Grey Heather
+**The North Face Men's Sweater Fleece Jacket:**
+- `/images/north-face-mens-sweater-fleece-black-heather.jpg` - Black Heather
+- `/images/north-face-mens-sweater-fleece-medium-grey-heather.jpg` - Medium Grey Heather
 
-**The North Face Highest Peak Full-Zip Fleece Jacket:**
-- `/images/north-face-highest-peak-black.jpg` - Black
-- `/images/north-face-highest-peak-navy.jpg` - Navy
-- `/images/north-face-highest-peak-gray.jpg` - Gray
-- `/images/north-face-highest-peak-charcoal.jpg` - Charcoal
+**The North Face Women's Sweater Fleece Jacket:**
+- `/images/north-face-womens-sweater-fleece-black-heather.jpg` - Black Heather
+- `/images/north-face-womens-sweater-fleece-medium-grey-heather.jpg` - Medium Grey Heather
+
+**The North Face Men's Highest Peak Full-Zip Fleece Jacket:**
+- `/images/north-face-mens-highest-peak-black.jpg` - Black
+- `/images/north-face-mens-highest-peak-navy.jpg` - Navy
+- `/images/north-face-mens-highest-peak-gray.jpg` - Gray
+- `/images/north-face-mens-highest-peak-charcoal.jpg` - Charcoal
+
+**The North Face Women's Highest Peak Full-Zip Fleece Jacket:**
+- `/images/north-face-womens-highest-peak-black.jpg` - Black
+- `/images/north-face-womens-highest-peak-navy.jpg` - Navy
+- `/images/north-face-womens-highest-peak-gray.jpg` - Gray
+- `/images/north-face-womens-highest-peak-charcoal.jpg` - Charcoal
 
 **Under Armour Men's Unstoppable Fleece Full-Zip:**
 - `/images/under-armour-mens-unstoppable-black.jpg` - Black
@@ -68,12 +78,17 @@ All images should be placed in `/public/images/` and referenced as `/images/file
 
 ## Choice 2 Products (Kits)
 
-### Adidas Polo Thumbnails (for Kit 3, Kit 6, Kit 7, Kit 12)
-- `/images/adidas-polo-black.jpg` - Black
-- `/images/adidas-polo-grey.jpg` - Grey
-- `/images/adidas-polo-navy.jpg` - Navy
-- `/images/adidas-polo-purple.jpg` - Purple
-- `/images/adidas-polo-royal-blue.jpg` - Royal Blue
+### Adidas Men's Polo Thumbnails (for Kit 3, Kit 6)
+- `/images/adidas-mens-polo-black.jpg` - Black
+- `/images/adidas-mens-polo-grey-three.jpg` - Grey Three
+- `/images/adidas-mens-polo-navy-blue.jpg` - Navy Blue
+- `/images/adidas-mens-polo-tech-purple.jpg` - Tech Purple
+
+### Adidas Women's Polo Thumbnails (for Kit 7, Kit 12)
+- `/images/adidas-womens-polo-black.jpg` - Black
+- `/images/adidas-womens-polo-grey-three.jpg` - Grey Three
+- `/images/adidas-womens-polo-navy-blue.jpg` - Navy Blue
+- `/images/adidas-womens-polo-tech-purple.jpg` - Tech Purple
 
 ### New Era Cap Thumbnails (for Kit 3, Kit 9, Kit 10, Kit 12)
 - `/images/new-era-cap-black.jpg` - Black
@@ -87,12 +102,25 @@ All images should be placed in `/public/images/` and referenced as `/images/file
 - `/images/north-face-beanie-tnf-yellow.jpg` - TNF Yellow
 - `/images/north-face-beanie-urban-navy.jpg` - Urban Navy
 
-### Tile Mate Thumbnails (for Kit 1, Kit 8, Kit 9)
+### Tile Mate Thumbnails (for Kit 1 - 1 Pack)
 - `/images/tile-mate-black.jpg` - Black
 - `/images/tile-mate-white.jpg` - White
 
-### Tech Organizer and Power Bank
-- `/images/tech-organizer-power-bank-black.jpg` - Black (default)
+### Tile Mate 2 Pack Thumbnails (for Kit 8, Kit 9)
+- `/images/tile-mate-2pack-black.jpg` - Black
+- `/images/tile-mate-2pack-white.jpg` - White
+
+### Apple AirTag Thumbnails (for Kit 10, Kit 11)
+- `/images/apple-airtag-white.jpg` - White (default, only color available)
+
+### Skull Candy Earbuds Thumbnail (for Kit 1)
+- `/images/skull-candy-earbuds.jpg` - Black (default)
+
+### Tech Organizer Thumbnails (for Tech Organizer & Power Bank kit)
+- `/images/tech-organizer-black.jpg` - Black (default)
+
+### Power Bank Thumbnails (for Tech Organizer & Power Bank kit)
+- `/images/power-bank-black.jpg` - Black (default)
 
 ### 4 Pack of Shirts
 - `/images/4-pack-shirts.jpg` - Default thumbnail

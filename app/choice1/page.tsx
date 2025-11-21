@@ -162,17 +162,13 @@ export default function Choice1Page() {
                   setSelectedColor('')
                 }
                 
-                // Default size based on product
-                if (product?.requires_size && product.available_sizes && product.available_sizes.length > 0) {
-                  // For Tile Mate 4 Pack, default to "4 Pack"
-                  if (product.name.includes('Tile Mate 4 Pack') && product.available_sizes.includes('4 Pack')) {
-                    setSelectedSize('4 Pack')
-                  } else if (product.available_sizes.length === 1) {
-                    // If only one size option, default to it
-                    setSelectedSize(product.available_sizes[0])
-                  } else {
-                    setSelectedSize(product.available_sizes[0])
-                  }
+                // Default size based on product - only if there's one option
+                if (product?.requires_size && product.available_sizes && product.available_sizes.length === 1) {
+                  // Only auto-select if there's exactly one size option
+                  setSelectedSize(product.available_sizes[0])
+                } else {
+                  // Multiple options - don't default, let user select
+                  setSelectedSize('')
                 }
               }}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#ffb500] focus:border-transparent text-black bg-white"

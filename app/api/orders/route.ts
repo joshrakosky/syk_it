@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
           product_id: choice2.productId,
           product_name: 'Skull Candy Earbuds',
           customer_item_number: product2?.earbuds_customer_item_number || null,
-          color: null,
+          color: choice2.earbudsColor || 'Black',
           size: null
         })
       } else if (kitType === 'airtag-cap') {
