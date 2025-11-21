@@ -3,17 +3,17 @@
 
 export const APPROVED_EMAILS = [
   'josh.rakosky@gmail.com',
-  // Test emails for testing order flow
-  'test1@stryker.com',
-  'test2@stryker.com',
-  'test3@stryker.com',
-  'test4@stryker.com',
-  'test5@stryker.com',
-  'test6@stryker.com',
-  'test7@stryker.com',
-  'test8@stryker.com',
-  'test9@stryker.com',
-  'test10@stryker.com',
+  // Team test emails for order testing
+  'team1@stryker.com',
+  'team2@stryker.com',
+  'team3@stryker.com',
+  'team4@stryker.com',
+  'team5@stryker.com',
+  'team6@stryker.com',
+  'team7@stryker.com',
+  'team8@stryker.com',
+  'team9@stryker.com',
+  'team10@stryker.com',
 ]
 
 // Check if an email is approved

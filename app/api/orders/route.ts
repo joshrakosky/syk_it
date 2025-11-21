@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
-// Generate unique order number in format syk-001, syk-002, etc.
+// Generate unique order number in format sykit-001, sykit-002, etc.
 async function generateOrderNumber(): Promise<string> {
   // Get the highest existing order number
   const { data: orders, error } = await supabase
@@ -13,26 +13,26 @@ async function generateOrderNumber(): Promise<string> {
   if (error) {
     console.error('Error fetching orders:', error)
     // Fallback: start from 1 if there's an error
-    return 'syk-001'
+    return 'sykit-001'
   }
 
   if (!orders || orders.length === 0) {
     // First order
-    return 'syk-001'
+    return 'sykit-001'
   }
 
-  // Extract number from existing order (e.g., "syk-001" -> 1)
+  // Extract number from existing order (e.g., "sykit-001" -> 1 or "syk-001" -> 1 for migration)
   const lastOrderNumber = orders[0].order_number
-  const match = lastOrderNumber.match(/syk-(\d+)/i)
+  const match = lastOrderNumber.match(/(?:sykit|syk)-(\d+)/i)
   
   if (match) {
     const lastNumber = parseInt(match[1], 10)
     const nextNumber = lastNumber + 1
-    return `syk-${String(nextNumber).padStart(3, '0')}`
+    return `sykit-${String(nextNumber).padStart(3, '0')}`
   }
 
   // If format doesn't match, start from 1
-  return 'syk-001'
+  return 'sykit-001'
 }
 
 export async function POST(request: NextRequest) {

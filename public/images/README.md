@@ -2,6 +2,13 @@
 
 Place product thumbnail images in this `public/images/` directory. Each color variant should have its own thumbnail.
 
+## Logo
+
+- `/images/stryker-logo.png` - Stryker logo image (or `.jpg`, `.svg`, `.webp` - will auto-detect)
+  - Used on landing page and all other pages
+  - Recommended size: Appropriate for header/logo display
+  - Format: PNG, JPG, SVG, or WebP
+
 ## Image Path Format
 
 All images should be placed in `/public/images/` and referenced as `/images/filename.jpg` in the database.
