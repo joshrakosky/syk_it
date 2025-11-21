@@ -169,6 +169,17 @@ export default function AdminExportButton() {
             deco = 'Stryker | Front of Power Bank | PMS 421 Grey'
           }
           
+          // Handle color-specific deco for 4 Pack of Shirts
+          if (item.product_name === '4 Pack of Shirts') {
+            if (item.color === 'Gold') {
+              deco = 'Stryker | Left Chest | Black'
+            } else if (item.color === 'Purple' || item.color === 'Navy') {
+              deco = 'Stryker | Left Sleeve | PMS 421 Grey'
+            } else if (item.color === 'Blue') {
+              deco = 'Stryker | Left Chest | PMS 421 Grey'
+            }
+          }
+          
           const existing = summaryMap.get(key)
           if (existing) {
             summaryMap.set(key, { quantity: existing.quantity + 1, deco: existing.deco })

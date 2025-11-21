@@ -256,14 +256,31 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // Single item selection
-      orderItems.push({
-        order_id: order.id,
-        product_id: choice2.productId,
-        product_name: product2?.name || 'Unknown Product',
-        customer_item_number: product2?.customer_item_number || null,
-        color: choice2.color || null,
-        size: choice2.size || null
-      })
+      // Special handling for 4 Pack of Shirts - break out into individual colors
+      if (product2?.name === '4 Pack of Shirts') {
+        const shirtColors = ['Gold', 'Purple', 'Navy', 'Blue']
+        const shirtSize = choice2.size || null
+        
+        shirtColors.forEach(color => {
+          orderItems.push({
+            order_id: order.id,
+            product_id: choice2.productId,
+            product_name: '4 Pack of Shirts',
+            customer_item_number: product2?.customer_item_number || null,
+            color: color,
+            size: shirtSize
+          })
+        })
+      } else {
+        orderItems.push({
+          order_id: order.id,
+          product_id: choice2.productId,
+          product_name: product2?.name || 'Unknown Product',
+          customer_item_number: product2?.customer_item_number || null,
+          color: choice2.color || null,
+          size: choice2.size || null
+        })
+      }
     }
 
     const { error: itemsError } = await supabase
