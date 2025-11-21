@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
 
     const { data: product2 } = await supabase
       .from('christmas_products')
-      .select('name, customer_item_number, has_multiple_items')
+      .select('name, customer_item_number, has_multiple_items, polo_customer_item_number, cap_customer_item_number, beanie_customer_item_number, tile_customer_item_number, airtag_customer_item_number, tech_organizer_customer_item_number, power_bank_customer_item_number, earbuds_customer_item_number')
       .eq('id', choice2.productId)
       .single()
 
@@ -114,36 +114,40 @@ export async function POST(request: NextRequest) {
       
       // Handle different kit types
       if (kitType === 'polo-cap') {
+        // Determine if it's men's or women's polo based on product name
+        const poloName = product2?.name?.includes("Women's") ? 'Adidas Women\'s Polo' : 'Adidas Men\'s Polo'
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Polo`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: poloName,
+          customer_item_number: product2?.polo_customer_item_number || null,
           color: choice2.poloColor || null,
           size: choice2.poloSize || null
         })
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Cap`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'New Era Cap',
+          customer_item_number: product2?.cap_customer_item_number || null,
           color: choice2.capColor || null,
           size: choice2.capSize || null
         })
       } else if (kitType === 'polo-beanie') {
+        // Determine if it's men's or women's polo based on product name
+        const poloName = product2?.name?.includes("Women's") ? 'Adidas Women\'s Polo' : 'Adidas Men\'s Polo'
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Polo`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: poloName,
+          customer_item_number: product2?.polo_customer_item_number || null,
           color: choice2.poloColor || null,
           size: choice2.poloSize || null
         })
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Beanie`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'The North Face Beanie',
+          customer_item_number: product2?.beanie_customer_item_number || null,
           color: choice2.beanieColor || null,
           size: choice2.beanieSize || 'OSFA'
         })
@@ -151,16 +155,16 @@ export async function POST(request: NextRequest) {
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Tile Mate`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'Tile Mate 2 Pack',
+          customer_item_number: product2?.tile_customer_item_number || null,
           color: choice2.tileColor || null,
           size: choice2.tileSize || null
         })
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Beanie`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'The North Face Beanie',
+          customer_item_number: product2?.beanie_customer_item_number || null,
           color: choice2.beanieColor || null,
           size: choice2.beanieSize || 'OSFA'
         })
@@ -168,33 +172,50 @@ export async function POST(request: NextRequest) {
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Tile Mate`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'Tile Mate 2 Pack',
+          customer_item_number: product2?.tile_customer_item_number || null,
           color: choice2.tileColor || null,
           size: choice2.tileSize || null
         })
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Cap`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'New Era Cap',
+          customer_item_number: product2?.cap_customer_item_number || null,
           color: choice2.capColor || null,
           size: choice2.capSize || null
+        })
+      } else if (kitType === 'tile-earbuds') {
+        orderItems.push({
+          order_id: order.id,
+          product_id: choice2.productId,
+          product_name: 'Tile Mate 2 Pack',
+          customer_item_number: product2?.tile_customer_item_number || null,
+          color: choice2.tileColor || null,
+          size: choice2.tileSize || null
+        })
+        orderItems.push({
+          order_id: order.id,
+          product_id: choice2.productId,
+          product_name: 'Skull Candy Earbuds',
+          customer_item_number: product2?.earbuds_customer_item_number || null,
+          color: null,
+          size: null
         })
       } else if (kitType === 'airtag-cap') {
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Apple AirTag`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'Apple AirTag',
+          customer_item_number: product2?.airtag_customer_item_number || null,
           color: choice2.airtagColor || 'White',
           size: choice2.airtagSize || null
         })
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Cap`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'New Era Cap',
+          customer_item_number: product2?.cap_customer_item_number || null,
           color: choice2.capColor || null,
           size: choice2.capSize || null
         })
@@ -202,18 +223,35 @@ export async function POST(request: NextRequest) {
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Apple AirTag`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'Apple AirTag',
+          customer_item_number: product2?.airtag_customer_item_number || null,
           color: choice2.airtagColor || 'White',
           size: choice2.airtagSize || null
         })
         orderItems.push({
           order_id: order.id,
           product_id: choice2.productId,
-          product_name: `${product2?.name || 'Unknown Product'} - Beanie`,
-          customer_item_number: product2?.customer_item_number || null,
+          product_name: 'The North Face Beanie',
+          customer_item_number: product2?.beanie_customer_item_number || null,
           color: choice2.beanieColor || null,
           size: choice2.beanieSize || 'OSFA'
+        })
+      } else if (kitType === 'tech-organizer-power-bank') {
+        orderItems.push({
+          order_id: order.id,
+          product_id: choice2.productId,
+          product_name: 'Tech Organizer',
+          customer_item_number: product2?.tech_organizer_customer_item_number || null,
+          color: choice2.poloColor || null,
+          size: null
+        })
+        orderItems.push({
+          order_id: order.id,
+          product_id: choice2.productId,
+          product_name: 'Power Bank',
+          customer_item_number: product2?.power_bank_customer_item_number || null,
+          color: choice2.capColor || null,
+          size: null
         })
       }
     } else {

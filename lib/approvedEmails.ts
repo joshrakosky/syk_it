@@ -3,11 +3,17 @@
 
 export const APPROVED_EMAILS = [
   'josh.rakosky@gmail.com',
-  // Add more approved email addresses here
-  // Examples:
-  // 'user1@stryker.com',
-  // 'user2@stryker.com',
-  // 'user3@example.com',
+  // Test emails for testing order flow
+  'test1@stryker.com',
+  'test2@stryker.com',
+  'test3@stryker.com',
+  'test4@stryker.com',
+  'test5@stryker.com',
+  'test6@stryker.com',
+  'test7@stryker.com',
+  'test8@stryker.com',
+  'test9@stryker.com',
+  'test10@stryker.com',
 ]
 
 // Check if an email is approved

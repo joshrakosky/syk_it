@@ -54,22 +54,34 @@ export default function Choice2Page() {
   
   const getFirstItemLabel = () => {
     const kitType = getKitType()
+    if (kitType === 'tech-organizer-power-bank') return 'Tech Organizer'
     if (kitType === 'polo-cap' || kitType === 'polo-beanie') return 'Polo'
-    if (kitType === 'tile-beanie' || kitType === 'tile-cap') return 'Tile Mate'
+    if (kitType === 'tile-beanie' || kitType === 'tile-cap' || kitType === 'tile-earbuds') return 'Tile Mate'
     if (kitType === 'airtag-cap' || kitType === 'airtag-beanie') return 'Apple AirTag'
     return 'Item 1'
   }
   
   const getSecondItemLabel = () => {
     const kitType = getKitType()
+    if (kitType === 'tech-organizer-power-bank') return 'Power Bank'
     if (kitType === 'polo-cap' || kitType === 'tile-cap' || kitType === 'airtag-cap') return 'Cap'
     if (kitType === 'polo-beanie' || kitType === 'tile-beanie' || kitType === 'airtag-beanie') return 'Beanie'
+    if (kitType === 'tile-earbuds') return 'Skull Candy Earbuds'
     return 'Item 2'
   }
   
   // Determine kit type
   const getKitType = () => {
     if (!productWithItems?.has_multiple_items) return 'single'
+    
+    // Check if it's Tech Organizer & Power Bank (has polo_colors and cap_colors but no sizes)
+    const isTechOrganizerPowerBank = productWithItems.name?.includes('Tech Organizer') &&
+                                     productWithItems.polo_colors && 
+                                     productWithItems.cap_colors &&
+                                     !productWithItems.polo_sizes &&
+                                     !productWithItems.cap_sizes
+    
+    if (isTechOrganizerPowerBank) return 'tech-organizer-power-bank'
     
     // Check if it's Tile Mate (only Black/White in polo_colors, no polo_sizes)
     const isTileMate = productWithItems.polo_colors && 
@@ -83,6 +95,8 @@ export default function Choice2Page() {
     
     if (isTileMate && productWithItems.beanie_colors) return 'tile-beanie'
     if (isTileMate && productWithItems.cap_colors) return 'tile-cap'
+    // Check if it's Tile Mate & Earbuds (has Tile Mate colors but no cap/beanie colors and name includes Earbuds)
+    if (isTileMate && productWithItems.name?.includes('Earbuds') && !productWithItems.cap_colors && !productWithItems.beanie_colors) return 'tile-earbuds'
     if (productWithItems.polo_colors && productWithItems.cap_colors) return 'polo-cap'
     if (productWithItems.polo_colors && productWithItems.beanie_colors) return 'polo-beanie'
     if (isAirtag && productWithItems.cap_colors) return 'airtag-cap'
@@ -185,6 +199,16 @@ export default function Choice2Page() {
           kitType: 'tile-cap',
           hasMultipleItems: true
         }))
+      } else if (kitType === 'tile-earbuds') {
+        if (!tileColor) { setError('Please select a Tile Mate color'); return }
+        if (!tileSize) { setError('Please select a Tile Mate size'); return }
+        
+        sessionStorage.setItem('choice2', JSON.stringify({
+          productId: selectedProductId,
+          tileColor, tileSize,
+          kitType: 'tile-earbuds',
+          hasMultipleItems: true
+        }))
       } else if (kitType === 'airtag-cap') {
         if (!airtagColor) { setError('Please select an AirTag color'); return }
         if (!airtagSize) { setError('Please select an AirTag size'); return }
@@ -207,6 +231,16 @@ export default function Choice2Page() {
           productId: selectedProductId,
           airtagColor, airtagSize, beanieColor, beanieSize,
           kitType: 'airtag-beanie',
+          hasMultipleItems: true
+        }))
+      } else if (kitType === 'tech-organizer-power-bank') {
+        if (!poloColor) { setError('Please select a Tech Organizer color'); return }
+        if (!capColor) { setError('Please select a Power Bank color'); return }
+        
+        sessionStorage.setItem('choice2', JSON.stringify({
+          productId: selectedProductId,
+          poloColor, capColor,
+          kitType: 'tech-organizer-power-bank',
           hasMultipleItems: true
         }))
       }
@@ -287,7 +321,18 @@ export default function Choice2Page() {
                 const product = products.find(p => p.id === productId)
                 const productWithDefaults = product as any
                 if (productWithDefaults?.has_multiple_items) {
-                  if (productWithDefaults.polo_colors && productWithDefaults.polo_colors.length > 0) {
+                  // Check if it's Tech Organizer & Power Bank
+                  const isTechOrganizerPowerBank = productWithDefaults.name?.includes('Tech Organizer')
+                  
+                  if (isTechOrganizerPowerBank) {
+                    // Default both to Black
+                    if (productWithDefaults.polo_colors && productWithDefaults.polo_colors.length > 0) {
+                      setPoloColor(productWithDefaults.polo_colors[0])
+                    }
+                    if (productWithDefaults.cap_colors && productWithDefaults.cap_colors.length > 0) {
+                      setCapColor(productWithDefaults.cap_colors[0])
+                    }
+                  } else if (productWithDefaults.polo_colors && productWithDefaults.polo_colors.length > 0) {
                     // Check if it's Tile Mate (Black/White) or Polo
                     if (productWithDefaults.polo_colors.includes('Black') && productWithDefaults.polo_colors.includes('White') && productWithDefaults.polo_colors.length === 2) {
                       setTileColor(productWithDefaults.polo_colors[0])
@@ -307,7 +352,7 @@ export default function Choice2Page() {
                       setPoloColor(productWithDefaults.polo_colors[0])
                     }
                   }
-                  if (productWithDefaults.cap_colors && productWithDefaults.cap_colors.length > 0) {
+                  if (productWithDefaults.cap_colors && productWithDefaults.cap_colors.length > 0 && !isTechOrganizerPowerBank) {
                     setCapColor(productWithDefaults.cap_colors[0])
                   }
                   if (productWithDefaults.cap_sizes && productWithDefaults.cap_sizes.length > 0) {
@@ -343,11 +388,13 @@ export default function Choice2Page() {
               {/* Multiple Items Layout */}
               {productWithItems?.has_multiple_items ? (() => {
                 const kitType = getKitType()
+                const hasTechOrganizer = kitType === 'tech-organizer-power-bank'
                 const hasPolo = kitType === 'polo-cap' || kitType === 'polo-beanie'
-                const hasTile = kitType === 'tile-beanie' || kitType === 'tile-cap'
-                const hasCap = kitType === 'polo-cap' || kitType === 'tile-cap' || kitType === 'airtag-cap'
+                const hasTile = kitType === 'tile-beanie' || kitType === 'tile-cap' || kitType === 'tile-earbuds'
+                const hasCap = kitType === 'polo-cap' || kitType === 'tile-cap' || kitType === 'airtag-cap' || kitType === 'tech-organizer-power-bank'
                 const hasBeanie = kitType === 'polo-beanie' || kitType === 'tile-beanie' || kitType === 'airtag-beanie'
                 const hasAirtag = kitType === 'airtag-cap' || kitType === 'airtag-beanie'
+                const hasEarbuds = kitType === 'tile-earbuds'
                 
                 return (
                   <>
@@ -369,7 +416,9 @@ export default function Choice2Page() {
                         </h3>
                         {/* First Item Image */}
                         <div className="mb-4">
-                          {hasPolo && getPoloThumbnail() ? (
+                          {hasTechOrganizer && getPoloThumbnail() ? (
+                            <img src={getPoloThumbnail() || ''} alt="Tech Organizer" className="w-full rounded-lg shadow-md" />
+                          ) : hasPolo && getPoloThumbnail() ? (
                             <img src={getPoloThumbnail() || ''} alt="Polo" className="w-full rounded-lg shadow-md" />
                           ) : hasTile && getTileThumbnail() ? (
                             <img src={getTileThumbnail() || ''} alt="Tile Mate" className="w-full rounded-lg shadow-md" />
@@ -392,7 +441,19 @@ export default function Choice2Page() {
                         </div>
                         
                         {/* First Item Dropdowns */}
-                        {hasPolo && (
+                        {hasTechOrganizer && (
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Tech Organizer Color *</label>
+                              <select value={poloColor} onChange={(e) => { setPoloColor(e.target.value); setError('') }} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#ffb500] focus:border-transparent text-black bg-white">
+                                <option value="">-- Select color --</option>
+                                {productWithItems.polo_colors?.map((color: string) => <option key={color} value={color}>{color}</option>)}
+                              </select>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {hasPolo && !hasTechOrganizer && (
                           <div className="space-y-3">
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">Polo Color *</label>
@@ -460,6 +521,13 @@ export default function Choice2Page() {
                             <img src={getCapThumbnail() || ''} alt="Cap" className="w-full rounded-lg shadow-md" />
                           ) : hasBeanie && getBeanieThumbnail() ? (
                             <img src={getBeanieThumbnail() || ''} alt="Beanie" className="w-full rounded-lg shadow-md" />
+                          ) : hasEarbuds ? (
+                            <div className="w-full aspect-square bg-gray-100 rounded-lg shadow-md flex items-center justify-center border-2 border-gray-300">
+                              <div className="text-center p-4">
+                                <div className="text-4xl mb-2">🎧</div>
+                                <div className="text-sm text-gray-500 font-medium">Skull Candy Earbuds</div>
+                              </div>
+                            </div>
                           ) : (
                             <div className="w-full aspect-square bg-gray-100 rounded-lg shadow-md flex items-center justify-center border-2 border-gray-300">
                               <div className="text-center p-4">
@@ -471,7 +539,19 @@ export default function Choice2Page() {
                         </div>
                         
                         {/* Second Item Dropdowns */}
-                        {hasCap && (
+                        {hasTechOrganizer && (
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Power Bank Color *</label>
+                              <select value={capColor} onChange={(e) => { setCapColor(e.target.value); setError('') }} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#ffb500] focus:border-transparent text-black bg-white">
+                                <option value="">-- Select color --</option>
+                                {productWithItems.cap_colors?.map((color: string) => <option key={color} value={color}>{color}</option>)}
+                              </select>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {hasCap && !hasTechOrganizer && (
                           <div className="space-y-3">
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">Cap Color *</label>
@@ -506,6 +586,12 @@ export default function Choice2Page() {
                                 <option value="OSFA">OSFA</option>
                               </select>
                             </div>
+                          </div>
+                        )}
+                        
+                        {hasEarbuds && (
+                          <div className="space-y-3">
+                            <p className="text-sm text-gray-600">No additional options required for earbuds.</p>
                           </div>
                         )}
                       </div>
