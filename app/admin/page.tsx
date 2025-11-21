@@ -69,7 +69,25 @@ export default function AdminPage() {
     }
   }
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
+    // Fetch all products to get deco information
+    const { data: productsData, error: productsError } = await supabase
+      .from('christmas_products')
+      .select('id, deco')
+
+    if (productsError) {
+      alert('Failed to load product information. Please try again.')
+      return
+    }
+
+    // Create a map of product_id -> deco for quick lookup
+    const productDecoMap = new Map<string, string>()
+    productsData?.forEach(product => {
+      if (product.deco) {
+        productDecoMap.set(product.id, product.deco)
+      }
+    })
+
     // Sheet 1: Detailed Orders (one row per item)
     const detailedData = orders.flatMap(order => {
       return order.items.map((item) => ({
@@ -90,7 +108,7 @@ export default function AdminPage() {
     })
 
     // Sheet 2: Distribution Summary (grouped by product/color/size)
-    const summaryMap = new Map<string, number>()
+    const summaryMap = new Map<string, { quantity: number; deco: string }>()
     
     orders.forEach(order => {
       order.items.forEach(item => {
@@ -102,19 +120,98 @@ export default function AdminPage() {
           item.size || 'N/A'
         ].join('|')
         
-        summaryMap.set(key, (summaryMap.get(key) || 0) + 1)
+        // Get deco from product, with color-specific logic for Sweater Fleece and Tile Mate
+        let deco = item.product_id ? (productDecoMap.get(item.product_id) || '') : ''
+        
+        // Handle color-specific deco for Sweater Fleece products
+        if (item.product_name?.includes('Sweater Fleece')) {
+          if (item.color === 'Black Heather') {
+            deco = 'Stryker | Right Chest | PMS 421 Grey'
+          } else if (item.color === 'Medium Grey Heather') {
+            deco = 'Stryker | Right Chest | Black'
+          }
+        }
+        
+        // Handle color-specific deco for Tile Mate products
+        if (item.product_name?.includes('Tile Mate')) {
+          if (item.color === 'Black') {
+            deco = 'Stryker | Right Corner | PMS 421 Grey'
+          } else if (item.color === 'White') {
+            deco = 'Stryker | Right Corner | Black'
+          }
+        }
+        
+        // Handle color-specific deco for Under Armour Unstoppable jackets
+        if (item.product_name?.includes('Unstoppable')) {
+          if (item.color === 'Gray' || item.color === 'Grey') {
+            deco = 'Stryker | Right Chest | Black'
+          } else if (item.color === 'Black') {
+            deco = 'Stryker | Right Chest | PMS 421 Grey'
+          }
+        }
+        
+        // Handle color-specific deco for Adidas Polos
+        if (item.product_name === 'Adidas Men\'s Polo' || item.product_name === 'Adidas Women\'s Polo') {
+          if (item.color === 'Grey Three') {
+            deco = 'Stryker | Left Chest | Black'
+          } else {
+            deco = 'Stryker | Left Chest | PMS 421 Grey'
+          }
+        }
+        
+        // Handle deco for New Era Caps (all colors get PMS 421 Grey)
+        if (item.product_name === 'New Era Cap') {
+          deco = 'Stryker | Center of Cap | PMS 421 Grey'
+        }
+        
+        // Handle color-specific deco for North Face Beanies
+        if (item.product_name === 'The North Face Beanie') {
+          if (item.color === 'TNF Yellow' || item.color === 'TNF Medium Grey Heather') {
+            deco = 'Stryker | Center of Beanie Cuff | Black'
+          } else {
+            deco = 'Stryker | Center of Beanie Cuff | PMS 421 Grey'
+          }
+        }
+        
+        // Handle deco for Apple AirTag
+        if (item.product_name === 'Apple AirTag') {
+          deco = 'Stryker | Center of AirTag | Black'
+        }
+        
+        // Handle deco for Skull Candy Earbuds
+        if (item.product_name === 'Skull Candy Earbuds') {
+          deco = 'Stryker | Front of Case | PMS 421 Grey'
+        }
+        
+        // Handle deco for Tech Organizer
+        if (item.product_name === 'Tech Organizer') {
+          deco = 'Stryker | Front Pocket | PMS 421 Grey'
+        }
+        
+        // Handle deco for Power Bank
+        if (item.product_name === 'Power Bank') {
+          deco = 'Stryker | Front of Power Bank | PMS 421 Grey'
+        }
+        
+        const existing = summaryMap.get(key)
+        if (existing) {
+          summaryMap.set(key, { quantity: existing.quantity + 1, deco: existing.deco })
+        } else {
+          summaryMap.set(key, { quantity: 1, deco })
+        }
       })
     })
 
     // Convert map to array for Excel
-    const summaryData = Array.from(summaryMap.entries()).map(([key, quantity]) => {
+    const summaryData = Array.from(summaryMap.entries()).map(([key, data]) => {
       const [productName, customerItem, color, size] = key.split('|')
       return {
         'Product Name': productName,
         'Customer Item #': customerItem,
         'Color': color,
         'Size': size,
-        'Quantity': quantity
+        'Deco': data.deco || '',
+        'Quantity': data.quantity
       }
     }).sort((a, b) => {
       // Sort by product name, then color, then size
