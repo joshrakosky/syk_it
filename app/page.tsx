@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import StrykerLogo from '@/components/StrykerLogo'
 import AdminExportButton from '@/components/AdminExportButton'
+import HelpIcon from '@/components/HelpIcon'
 import { isEmailApproved } from '@/lib/approvedEmails'
 
 export default function LandingPage() {
@@ -35,13 +36,14 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-yellow-50 px-4 relative">
       <AdminExportButton />
+      <HelpIcon />
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <div className="mb-4 flex justify-center">
             <StrykerLogo className="text-3xl" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            IT Christmas
+            Integration Services Appreciation
           </h1>
           <p className="text-gray-600">
             Enter email to start shopping

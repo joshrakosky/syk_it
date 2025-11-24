@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import * as XLSX from 'xlsx'
 import { OrderWithItems } from '@/types'
+import HelpIcon from '@/components/HelpIcon'
 
 export default function AdminPage() {
   const [orders, setOrders] = useState<OrderWithItems[]>([])
@@ -255,7 +256,8 @@ export default function AdminPage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 relative">
+        <HelpIcon />
         <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Access</h1>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -291,7 +293,8 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 py-8 px-4 relative">
+      <HelpIcon />
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="flex justify-between items-center mb-6">

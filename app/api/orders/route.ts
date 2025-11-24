@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
         order_number: orderNumber,
         shipping_name: shipping.name,
         shipping_address: shipping.address,
+        shipping_address2: shipping.address2 || null,
         shipping_city: shipping.city,
         shipping_state: shipping.state,
         shipping_zip: shipping.zip,
