@@ -10,7 +10,8 @@ export default function HelpIcon() {
       {/* Help Icon */}
       <button
         onClick={() => setShowHelp(true)}
-        className="absolute top-4 left-4 w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-700 font-bold text-lg transition-colors shadow-md z-40"
+        className="absolute top-4 left-4 w-10 h-10 rounded-full flex items-center justify-center text-black font-bold text-lg transition-opacity shadow-md z-40 hover:opacity-90"
+        style={{ backgroundColor: '#ffb500' }}
         aria-label="Help"
       >
         ?
@@ -53,6 +54,15 @@ export default function HelpIcon() {
                   className="text-[#ffb500] hover:underline font-medium"
                 >
                   metroinfo@proforma.com
+                </a>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 mb-2">Phone:</p>
+                <a 
+                  href="tel:317-885-0077"
+                  className="text-[#ffb500] hover:underline font-medium"
+                >
+                  317-885-0077
                 </a>
               </div>
             </div>
