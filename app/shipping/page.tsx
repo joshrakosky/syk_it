@@ -18,7 +18,6 @@ export default function ShippingPage() {
     country: 'USA'
   })
   const [error, setError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     // Check if email and both choices exist
@@ -30,9 +29,20 @@ export default function ShippingPage() {
       router.push('/')
       return
     }
+
+    // Load existing shipping data if returning from review page
+    const savedShipping = sessionStorage.getItem('shipping')
+    if (savedShipping) {
+      try {
+        const parsedShipping = JSON.parse(savedShipping)
+        setFormData(parsedShipping)
+      } catch (e) {
+        // If parsing fails, use default formData
+      }
+    }
   }, [router])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
@@ -42,47 +52,11 @@ export default function ShippingPage() {
       return
     }
 
-    setSubmitting(true)
-
-    try {
-      // Get selections from sessionStorage
-      const email = sessionStorage.getItem('orderEmail')!
-      const choice1 = JSON.parse(sessionStorage.getItem('choice1')!)
-      const choice2 = JSON.parse(sessionStorage.getItem('choice2')!)
-
-      // Submit order to API
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          shipping: formData,
-          choice1,
-          choice2
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to submit order')
-      }
-
-      const orderData = await response.json()
-      
-      // Store order number for confirmation page
-      sessionStorage.setItem('orderNumber', orderData.order_number)
-      
-      // Clear selections
-      sessionStorage.removeItem('choice1')
-      sessionStorage.removeItem('choice2')
-      
-      router.push('/confirmation')
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit order. Please try again.')
-      setSubmitting(false)
-    }
+    // Save shipping information to sessionStorage
+    sessionStorage.setItem('shipping', JSON.stringify(formData))
+    
+    // Navigate to review page
+    router.push('/review')
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -234,11 +208,10 @@ export default function ShippingPage() {
               </button>
               <button
                 type="submit"
-                disabled={submitting}
-                className="px-6 py-2 text-black rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#ffb500] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                className="px-6 py-2 text-black rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#ffb500] focus:ring-offset-2 font-medium"
                 style={{ backgroundColor: '#ffb500' }}
               >
-                {submitting ? 'Submitting...' : 'Submit Order →'}
+                Continue to Review →
               </button>
             </div>
           </form>
