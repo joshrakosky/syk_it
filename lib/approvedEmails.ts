@@ -94,6 +94,7 @@ export const APPROVED_EMAILS = [
   'maheshbabu.kothoju@stryker.com',
   'mandi.turner@stryker.com',
   'manjiri.ramachandran@stryker.com',
+  'manishkumar.laghumavarapu@stryker.com',
   'margaret.redmond@stryker.com',
   'maria.jackson@stryker.com',
   'marie.bag-ao@stryker.com',
